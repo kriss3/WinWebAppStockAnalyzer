@@ -8,21 +8,16 @@ using StockAnalyzer.Core.Domain;
 
 namespace StockAnalyzer.Core;
 
-public class DataStore
+public class DataStore(string basePath = "")
 {
-    private string basePath { get; }
-
-    public DataStore(string basePath = "")
-    {
-        this.basePath = basePath;
-    }
+    private string BasePath { get; } = basePath;
 
     public async Task<IList<StockPrice>> GetStockPrices(string stockIdentifier)
     {
         var prices = new List<StockPrice>();
 
         using var stream =
-            new StreamReader(File.OpenRead(Path.Combine(basePath, @"StockPrices_Small.csv")));
+            new StreamReader(File.OpenRead(Path.Combine(BasePath, @"StockPrices_Small.csv")));
         
         await stream.ReadLineAsync(); // Skip the header how in the CSV
 
@@ -33,8 +28,7 @@ public class DataStore
 
             for (var i = 0; i < segments.Length; i++) segments[i] = segments[i].Trim('\'', '"');
                
-            if(segments[0].ToUpperInvariant() 
-                != stockIdentifier.ToUpperInvariant())
+            if(!segments[0].Equals(stockIdentifier, StringComparison.InvariantCultureIgnoreCase))
             {
                 continue;
             }
@@ -52,7 +46,7 @@ public class DataStore
             prices.Add(price);
         }
         
-        if(!prices.Any())
+        if(prices.Count == 0)
         {
             throw new KeyNotFoundException($"Could not find any stocks for {stockIdentifier}");
         }

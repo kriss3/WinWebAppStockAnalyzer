@@ -15,8 +15,8 @@ namespace StockAnalyzer.Windows;
 public partial class MainWindow : Window
 {
     private static readonly string API_URL = "https://ps-async.fekberg.com/api/stocks";
-    private Stopwatch stopwatch = new();
-    private Random random = new();
+    private readonly Stopwatch stopwatch = new();
+    private readonly Random random = new();
 
     public MainWindow()
     {
@@ -97,7 +97,7 @@ public partial class MainWindow : Window
         Stocks.ItemsSource = data;
     }
 
-    private StockCalculation Calculate(IEnumerable<StockPrice> prices)
+    private static StockCalculation Calculate(IEnumerable<StockPrice> prices)
     {
         #region Start stopwatch
         var calculation = new StockCalculation();

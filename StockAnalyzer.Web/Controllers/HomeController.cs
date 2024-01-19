@@ -8,22 +8,20 @@ namespace StockAnalyzer.Web.Controllers;
 
 public class HomeController : Controller
 {
-    private static string API_URL = "https://ps-async.fekberg.com/api/stocks";
+    private static readonly string API_URL = "https://ps-async.fekberg.com/api/stocks";
 
     public async Task<IActionResult> Index()
     {
-        using (var client = new HttpClient())
-        {
-            var responseTask = client.GetAsync($"{API_URL}/MSFT");
+        using var client = new HttpClient();
+        var responseTask = client.GetAsync($"{API_URL}/MSFT");
 
-            var response = await responseTask;
+        var response = await responseTask;
 
-            var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync();
 
-            var data = JsonConvert.DeserializeObject<IEnumerable<StockPrice>>(content);
+        var data = JsonConvert.DeserializeObject<IEnumerable<StockPrice>>(content);
 
-            return View(data);
-        }
+        return View(data);
     }
 
     public IActionResult Privacy()

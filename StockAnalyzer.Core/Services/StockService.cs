@@ -17,7 +17,7 @@ public interface IStockService
 
 public class StockService : IStockService
 {
-    private static string API_URL = "https://ps-async.fekberg.com/api/stocks";
+    private static readonly string API_URL = "https://ps-async.fekberg.com/api/stocks";
     private int i = 0;
 
     public async Task<IEnumerable<StockPrice>>
@@ -28,19 +28,18 @@ public class StockService : IStockService
         // it takes a little bit longer.
         //
         // DO NOT DO THIS IN PRODUCTION...
-        await Task.Delay((i++) * 1000);
+        await Task.Delay((i++) * 1000, cancellationToken);
 
-        using (var client = new HttpClient())
-        {
-            var result = await client.GetAsync($"{API_URL}/{stockIdentifier}",
-                cancellationToken);
+        using var client = new HttpClient();
 
-            result.EnsureSuccessStatusCode();
+        var result = await client.GetAsync($"{API_URL}/{stockIdentifier}",
+            cancellationToken);
 
-            var content = await result.Content.ReadAsStringAsync();
+        result.EnsureSuccessStatusCode();
 
-            return JsonConvert.DeserializeObject<IEnumerable<StockPrice>>(content);
-        }
+        var content = await result.Content.ReadAsStringAsync(cancellationToken);
+
+        return JsonConvert.DeserializeObject<IEnumerable<StockPrice>>(content);
     }
 }
 
