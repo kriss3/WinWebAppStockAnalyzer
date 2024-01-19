@@ -16,13 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StockAnalyzer.Core\StockAnalyzer.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="StockPrices_Small.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StockAnalyzer.Core\StockAnalyzer.Core.csproj" />
   </ItemGroup>
 
 </Project>

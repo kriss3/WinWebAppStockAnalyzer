@@ -1,37 +1,27 @@
 ﻿using Newtonsoft.Json;
-using StockAnalyzer.Core;
 using StockAnalyzer.Core.Domain;
-using StockAnalyzer.Core.Services;
-using StockAnalyzer.Windows.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Navigation;
 
 namespace StockAnalyzer.Windows;
 
 public partial class MainWindow : Window
 {
-    private static string API_URL = "https://ps-async.fekberg.com/api/stocks";
-    private Stopwatch stopwatch = new Stopwatch();
-    private Random random = new Random();
+    private static readonly string API_URL = "https://ps-async.fekberg.com/api/stocks";
+    private Stopwatch stopwatch = new();
+    private Random random = new();
 
     public MainWindow()
     {
         InitializeComponent();
     }
-
-
 
     private async void Search_Click(object sender, RoutedEventArgs e)
     {
@@ -91,14 +81,21 @@ public partial class MainWindow : Window
     }
 
 
+    private async void Search_Sync_Click(object sender, RoutedEventArgs e) 
+    {
+        BeforeLoadingStockData();
 
+        using HttpClient client = new();
 
+        Task<HttpResponseMessage> responseTask = client.GetAsync($"{API_URL}/{StockIdentifier.Text}");
 
+        var response = await responseTask;
+        var content = await response.Content.ReadAsStringAsync();
 
+        IEnumerable<StockPrice>? data = JsonConvert.DeserializeObject<IEnumerable<StockPrice>>(content);
 
-
-
-
+        Stocks.ItemsSource = data;
+    }
 
     private StockCalculation Calculate(IEnumerable<StockPrice> prices)
     {
@@ -135,14 +132,6 @@ public partial class MainWindow : Window
                 Open = random.Next(10, 1024)
             });
     }
-
-
-
-
-
-
-
-
 
 
 
