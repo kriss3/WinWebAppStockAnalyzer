@@ -25,7 +25,19 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
-    private async void Search_Click(object sender, RoutedEventArgs e)
+    private async void Search_Click(object sender, RoutedEventArgs e) 
+    {
+        try
+        {
+            //ch5 working with Asynch Stream.
+        }
+        catch (Exception ex)
+        {
+            Notes.Text = ex.Message;
+        }
+    }
+
+    private async void Search_Click_Ch4(object sender, RoutedEventArgs e)
     {
         BeforeLoadingStockData();
 

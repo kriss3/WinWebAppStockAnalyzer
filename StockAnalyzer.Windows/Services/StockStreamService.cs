@@ -9,10 +9,14 @@ namespace StockAnalyzer.Windows.Services;
 
 public interface IStockStreamService
 {
-    IAsyncEnumerable<StockPrice>
+	//IAsyncEnumerable<T> is a new interface in C# 8.0
+	//Exposes an enumerator the provides asynchronous iteration over values of a specified type
+	IAsyncEnumerable<StockPrice>
         GetAllStockPrices(CancellationToken cancellationToken = default);
 }
 
+
+//The EnumeratorCancellation attribute is optional. Only required when using WithCancellation()
 public class MockStockStreamService : IStockStreamService
 {
     public async IAsyncEnumerable<StockPrice> 
@@ -21,8 +25,11 @@ public class MockStockStreamService : IStockStreamService
     {
         await Task.Delay(500, cancellationToken);
 
-        yield return new StockPrice { Identifier = "MSFT", Change = 0.5m };
+		//using yield return with the IAsyncEnumerable will signal
+		//to the iterator using this enumerator that it has an item to process.
+		yield return new StockPrice { Identifier = "MSFT", Change = 0.5m };
 
+        //this delay indicates that the caller will be able to get each item after 500ms each.
         await Task.Delay(500, cancellationToken);
 
         yield return new StockPrice { Identifier = "MSFT", Change = 0.2m };
