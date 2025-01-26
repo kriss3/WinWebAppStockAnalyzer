@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
+using StockAnalyzer.Core;
 using StockAnalyzer.Core.Domain;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -67,7 +69,7 @@ public partial class MainWindow : Window
                 }
                 catch (Exception ex)
                 {
-                    throw;
+                    Notes.Text = ex.Message;
                 }
             });
         }
@@ -85,16 +87,76 @@ public partial class MainWindow : Window
     {
         BeforeLoadingStockData();
 
-        using HttpClient client = new();
+        try
+        {
+            using HttpClient client = new();
 
-        Task<HttpResponseMessage> responseTask = client.GetAsync($"{API_URL}/{StockIdentifier.Text}");
+            Task<HttpResponseMessage> responseTask = client.GetAsync($"{API_URL}/{StockIdentifier.Text}");
 
-        var response = await responseTask;
-        var content = await response.Content.ReadAsStringAsync();
+            var response = await responseTask;
+            var content = await response.Content.ReadAsStringAsync();
 
-        IEnumerable<StockPrice>? data = JsonConvert.DeserializeObject<IEnumerable<StockPrice>>(content);
+            IEnumerable<StockPrice>? data = JsonConvert.DeserializeObject<IEnumerable<StockPrice>>(content);
 
-        Stocks.ItemsSource = data;
+            Stocks.ItemsSource = data;
+        }
+        catch (Exception ex)
+        {
+
+            Notes.Text = ex.Message;
+        }
+
+        AfterLoadingStockData();
+    }
+
+    private async void Search_Local_Async_Click(object sender, RoutedEventArgs e) 
+    {
+        BeforeLoadingStockData();
+
+        var getStocksTask = GetStocks();
+
+        await getStocksTask;
+
+        AfterLoadingStockData();
+    }
+
+    private async void Search_Local_File_Click(object sender, RoutedEventArgs e) 
+    {
+        try
+        {
+            BeforeLoadingStockData();
+
+            var lines = File.ReadAllLines("StockPrices_Small.csv");
+
+            List<StockPrice> data = [];
+            data.AddRange(
+                from string line in lines.Skip(1)
+                let price = StockPrice.FromCSV(line)
+                select price);
+            
+            Stocks.ItemsSource = data.Where(sp => sp.Identifier == StockIdentifier.Text);
+
+            AfterLoadingStockData();
+        }
+        catch (Exception ex)
+        {
+            Notes.Text = ex.Message;
+        }
+    }
+
+    // Introducing async method only. It still needs to be called from an async method
+    private async Task GetStocks() 
+    {
+        try
+        {
+            DataStore store = new();
+            var responseTask = store.GetStockPrices(StockIdentifier.Text);
+            Stocks.ItemsSource = await responseTask;
+        }
+        catch (Exception ex)
+        {
+            Notes.Text = ex.Message;
+        }
     }
 
     private static StockCalculation Calculate(IEnumerable<StockPrice> prices)
