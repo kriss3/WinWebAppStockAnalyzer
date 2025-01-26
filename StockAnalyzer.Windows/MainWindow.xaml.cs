@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using StockAnalyzer.Core;
 using StockAnalyzer.Core.Domain;
+using StockAnalyzer.Core.Services;
 using StockAnalyzer.Windows.Services;
 using System;
 using System.Collections.Concurrent;
@@ -255,4 +256,19 @@ public partial class MainWindow : Window
     {
         Application.Current.Shutdown();
     }
+
+    private async Task SearchForStocks() 
+    {
+        var svc = new StockService();
+        var loadingTasks = new List<Task<IEnumerable<StockPrice>>>();
+
+		foreach (var identifier in StockIdentifier.Text.Split(',', ' '))
+		{
+			var loadTask = svc.GetStockPricesFor(identifier, CancellationToken.None);
+			loadingTasks.Add(loadTask);
+		}
+        var data = await Task.WhenAll(loadingTasks);
+
+        Stocks.ItemsSource = data.SelectMany(stocks => stocks);
+	}
 }
