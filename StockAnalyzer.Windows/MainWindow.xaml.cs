@@ -1,13 +1,16 @@
 ﻿using Newtonsoft.Json;
 using StockAnalyzer.Core;
 using StockAnalyzer.Core.Domain;
+using StockAnalyzer.Windows.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Navigation;
@@ -29,13 +32,32 @@ public partial class MainWindow : Window
     {
         try
         {
-            //ch5 working with Asynch Stream.
-        }
+            //ch5 working with async Stream.
+            BeforeLoadingStockData();
+            var identifier = StockIdentifier.Text.Split(' ', ',');
+            var data = new ObservableCollection<StockPrice>();
+            Stocks.ItemsSource = data;
+
+            var svc = new MockStockStreamService();
+            var enumerator = svc.GetAllStockPrices();
+
+            await foreach (var price in enumerator.WithCancellation(CancellationToken.None))
+			{
+				if (identifier.Contains(price.Identifier))
+				{
+					data.Add(price);
+				}
+			}
+		}
         catch (Exception ex)
         {
             Notes.Text = ex.Message;
         }
-    }
+		finally
+		{
+			AfterLoadingStockData();
+		}   
+	}
 
     private async void Search_Click_Ch4(object sender, RoutedEventArgs e)
     {
