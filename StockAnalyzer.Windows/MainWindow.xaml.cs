@@ -29,7 +29,13 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
+
     private async void Search_Click(object sender, RoutedEventArgs e) 
+    { 
+    
+    }
+
+    private async void Search_Click_Ch5(object sender, RoutedEventArgs e) 
     {
         try
         {
@@ -116,7 +122,6 @@ public partial class MainWindow : Window
 
         AfterLoadingStockData();
     }
-
 
     private async void Search_Sync_Click(object sender, RoutedEventArgs e) 
     {
