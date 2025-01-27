@@ -37,15 +37,22 @@ public partial class MainWindow : Window
         {
             BeforeLoadingStockData();
             var progress = new Progress<IEnumerable<StockPrice>>();
-            progress.ProgressChanged += (_, stocks) => 
+            progress.ProgressChanged += (_, stocks) =>
             {
                 StockProgress.Value++;
                 Notes.Text = $"Loaded {stocks.Count()} for {stocks.First().Identifier}{Environment.NewLine}";
-			};
-		}
+            };
+
+            // now I can pass progress to the executing method:
+            await SearchForStocks(progress);
+        }
         catch (Exception ex)
         {
             Notes.Text = ex.Message;
+        }
+        finally 
+        {
+            AfterLoadingStockData();
         }
 	}
 
@@ -291,5 +298,20 @@ public partial class MainWindow : Window
         var data = await Task.WhenAll(loadingTasks);
 
         Stocks.ItemsSource = data.SelectMany(stocks => stocks);
+	}
+
+	private async Task SearchForStocks(IProgress<IEnumerable<StockPrice>> progress)
+	{
+		var svc = new StockService();
+		var loadingTasks = new List<Task<IEnumerable<StockPrice>>>();
+
+		foreach (var identifier in StockIdentifier.Text.Split(',', ' '))
+		{
+			var loadTask = svc.GetStockPricesFor(identifier, CancellationToken.None);
+			loadingTasks.Add(loadTask);
+		}
+		var data = await Task.WhenAll(loadingTasks);
+
+		Stocks.ItemsSource = data.SelectMany(stocks => stocks);
 	}
 }
