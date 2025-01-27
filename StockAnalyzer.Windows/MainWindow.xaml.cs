@@ -36,7 +36,10 @@ public partial class MainWindow : Window
         try
         {
             BeforeLoadingStockData();
-
+            var progress = new Progress<IEnumerable<StockPrice>>();
+            progress.ProgressChanged += (_, stocks) => {
+            
+            };
 		}
         catch (Exception ex)
         {
@@ -250,8 +253,10 @@ public partial class MainWindow : Window
     {
         stopwatch.Restart();
         StockProgress.Visibility = Visibility.Visible;
-        StockProgress.IsIndeterminate = true;
-    }
+        StockProgress.IsIndeterminate = false;
+		StockProgress.Value = 0;
+        StockProgress.Maximum = StockIdentifier.Text.Split(',', ' ').Length;
+	}
 
     private void AfterLoadingStockData()
     {
