@@ -37,9 +37,11 @@ public partial class MainWindow : Window
         {
             BeforeLoadingStockData();
             var progress = new Progress<IEnumerable<StockPrice>>();
-            progress.ProgressChanged += (_, stocks) => {
-            
-            };
+            progress.ProgressChanged += (_, stocks) => 
+            {
+                StockProgress.Value++;
+                Notes.Text = $"Loaded {stocks.Count()} for {stocks.First().Identifier}{Environment.NewLine}";
+			};
 		}
         catch (Exception ex)
         {
