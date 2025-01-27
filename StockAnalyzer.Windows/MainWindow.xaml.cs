@@ -39,8 +39,8 @@ public partial class MainWindow : Window
             var progress = new Progress<IEnumerable<StockPrice>>();
             progress.ProgressChanged += (_, stocks) =>
             {
-                StockProgress.Value++;
-                Notes.Text = $"Loaded {stocks.Count()} for {stocks.First().Identifier}{Environment.NewLine}";
+                StockProgress.Value += 1;
+				Notes.Text += $"Loaded {stocks.Count()} for {stocks.First().Identifier}{Environment.NewLine}";
             };
 
             // now I can pass progress to the executing method:
@@ -308,6 +308,13 @@ public partial class MainWindow : Window
 		foreach (var identifier in StockIdentifier.Text.Split(',', ' '))
 		{
 			var loadTask = svc.GetStockPricesFor(identifier, CancellationToken.None);
+             
+            loadTask = loadTask.ContinueWith(completedTask =>
+			{
+				progress?.Report(completedTask.Result);
+				return completedTask.Result;
+			});
+
 			loadingTasks.Add(loadTask);
 		}
 		var data = await Task.WhenAll(loadingTasks);
