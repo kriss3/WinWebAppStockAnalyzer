@@ -31,11 +31,20 @@ public partial class MainWindow : Window
 
 
     private async void Search_Click(object sender, RoutedEventArgs e) 
-    { 
-    
-    }
+    {
+        //Progress bar and custom implementation IProgress<T>
+        try
+        {
+            BeforeLoadingStockData();
 
-    private async void Search_Click_Ch5(object sender, RoutedEventArgs e) 
+		}
+        catch (Exception ex)
+        {
+            Notes.Text = ex.Message;
+        }
+	}
+
+	private async void Search_Click_Ch5(object sender, RoutedEventArgs e) 
     {
         try
         {
