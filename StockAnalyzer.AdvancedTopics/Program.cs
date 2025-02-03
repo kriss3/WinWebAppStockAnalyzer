@@ -6,12 +6,27 @@ namespace StockAnalyzer.AdvancedTopics;
 
 internal class Program
 {
-    static void Main()
+	static object lockObject = new();
+	static void Main()
     {
-        Stopwatch stopwatch = new();
+		Stopwatch stopwatch = new();
         stopwatch.Start();
 
-        WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run");
+        decimal total = 0;
+
+		Parallel.For(0, 100, (i) =>
+		{
+			var result = Compute(i);
+			lock (lockObject) 
+            {
+				total += result;
+			}
+			
+		});
+		stopwatch.Stop();
+
+		WriteLine($"Total: {total}");
+		WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run");
         ReadLine();
     }
 
