@@ -12,17 +12,23 @@ internal class Program
 		Stopwatch stopwatch = new();
         stopwatch.Start();
 
-        decimal total = 0;
+        //decimal total = 0;
 
-        //NOTE: Alway prefer atomic operation over lock when possible as it's less overhead and performs faster.
-		Parallel.For(0, 100, (i) =>
+		//NOTE: Always prefer atomic operation over lock when possible as it's less overhead and performs faster.
+		//NOTE: Atomic operations are thread-safe and does not work on decimal , double, float, or long.
+		//Parallel.For(0, 100, (i) =>
+		//{
+		//	var result = Compute(i);
+		//	lock (lockObject) //Only lock for a very short time!
+		//          {
+		//		total += result;
+		//	}
+
+		int total = 0;	
+		Parallel.For(0, 100, () => 0, (i) =>
 		{
 			var result = Compute(i);
-			lock (lockObject) //Only lock for a very short time!
-            {
-				total += result;
-			}
-			
+			Interlocked.Add(ref total, (int)result);
 		});
 		stopwatch.Stop();
 
