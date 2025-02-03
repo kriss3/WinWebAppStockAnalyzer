@@ -1,16 +1,18 @@
 ﻿using System.Diagnostics;
 
+using static System.Console;
+
 namespace StockAnalyzer.AdvancedTopics;
 
 internal class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
         Stopwatch stopwatch = new();
         stopwatch.Start();
 
-        Console.WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run");
-        Console.ReadLine();
+        WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run");
+        ReadLine();
     }
 
     static Random random = new();
