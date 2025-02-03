@@ -17,7 +17,7 @@ internal class Program
 		Parallel.For(0, 100, (i) =>
 		{
 			var result = Compute(i);
-			lock (lockObject) 
+			lock (lockObject) //Only lock for a very short time!
             {
 				total += result;
 			}
