@@ -14,6 +14,7 @@ internal class Program
 
         decimal total = 0;
 
+        //NOTE: Alway prefer atomic operation over lock when possible as it's less overhead and performs faster.
 		Parallel.For(0, 100, (i) =>
 		{
 			var result = Compute(i);
