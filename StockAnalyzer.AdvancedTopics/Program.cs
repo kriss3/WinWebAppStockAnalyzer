@@ -16,6 +16,42 @@ internal class Program
 		//UsingInterlockedType();
 
 		//await IntroductionToDeadlock();
+
+		//WorkingWithCancellation();
+
+	}
+
+	private static void WorkingWithCancellation()
+	{
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
+
+		var cancellationTokenSource = new CancellationTokenSource();
+		cancellationTokenSource.CancelAfter(2000);
+
+		var parallelOptions = new ParallelOptions
+		{
+			CancellationToken = cancellationTokenSource.Token,
+			MaxDegreeOfParallelism = 1
+		};
+
+		int total = 0;
+		try
+		{
+			Parallel.For(0, 100, parallelOptions, (i) =>
+			{
+			});
+		}
+		catch (OperationCanceledException ex)
+		{
+
+			WriteLine("Cancellation requested!");
+		}
+
+
+		WriteLine($"Total: {total}");
+		WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run.");
+		ReadLine();
 	}
 
 	private static async Task IntroductionToDeadlock()
