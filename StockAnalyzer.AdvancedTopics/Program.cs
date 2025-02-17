@@ -29,12 +29,14 @@ internal class Program
 		var optionParallel = new ParallelOptions
 		{
 			MaxDegreeOfParallelism = 2
-		};	
+		};
+		asyncLocal.Value = 200;
 		Parallel.For(0, 100, optionParallel, (i) =>
 		{
 			var currentValue = asyncLocal.Value;
 			asyncLocal.Value = Compute(i);
 		});
+		var currentValue = asyncLocal.Value;
 	}
 
 	private static void WorkingWithThreadLocalOfT()
