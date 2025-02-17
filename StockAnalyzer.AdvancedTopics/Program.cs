@@ -11,6 +11,9 @@ internal class Program
 	static readonly object lock1 = new();
 	static readonly object lock2 = new();
 
+	static ThreadLocal<decimal?> threadLocal = new();
+	static AsyncLocal<decimal?> asyncLocal = new();
+
 	static async Task Main()
 	{
 		//UsingInterlockedType();
@@ -19,6 +22,32 @@ internal class Program
 
 		//WorkingWithCancellation();
 
+		// Working with ThreadLocal<T> and AsyncLocal<T>
+
+		//WorkingWithThreadLocalOfT();
+
+		var optionParallel = new ParallelOptions
+		{
+			MaxDegreeOfParallelism = 2
+		};	
+		Parallel.For(0, 100, optionParallel, (i) =>
+		{
+			var currentValue = asyncLocal.Value;
+			asyncLocal.Value = Compute(i);
+		});
+	}
+
+	private static void WorkingWithThreadLocalOfT()
+	{
+		var optionParallel = new ParallelOptions
+		{
+			MaxDegreeOfParallelism = 2
+		};
+		Parallel.For(0, 100, optionParallel, (i) =>
+		{
+			var currentValue = threadLocal.Value;
+			threadLocal.Value = Compute(i);
+		});
 	}
 
 	private static void WorkingWithCancellation()
