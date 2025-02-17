@@ -11,7 +11,7 @@ internal class Program
 	static readonly object lock1 = new();
 	static readonly object lock2 = new();
 
-	static void Main()
+	static async void Main()
 	{
 		//UsingInterlockedType();
 
@@ -43,7 +43,7 @@ internal class Program
 
 		});
 
-
+		await Task.WhenAll(t1, t2);
 
 		WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run");
 		ReadLine();
