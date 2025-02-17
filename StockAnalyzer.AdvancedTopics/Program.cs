@@ -24,7 +24,8 @@ internal class Program
 		//		total += result;
 		//	}
 
-		//Note: Interlock is preferred and it is faster that static lock object on a shared variables..
+		//NOTE: Interlock is preferred and it is faster that static lock object on a shared variables.
+		//NOTE: Avoid nested locks and shared locks.
 
 		int total = 0;	
 		Parallel.For(0, 100, () => 0, (i) =>
