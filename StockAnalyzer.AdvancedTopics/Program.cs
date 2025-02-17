@@ -8,9 +8,14 @@ internal class Program
 {
 	static readonly object lockObject = new();  
 	static void Main()
-    {
+	{
+		//UsingInterlockedType();
+	}
+
+	private static void UsingInterlockedType()
+	{
 		Stopwatch stopwatch = new();
-        stopwatch.Start();
+		stopwatch.Start();
 
 		//decimal total = 0;
 
@@ -29,7 +34,7 @@ internal class Program
 
 		//NOTE: Calling an expensive operation inside a lock isn't recommended as it is forcing other threads to wait.
 
-		int total = 0;	
+		int total = 0;
 		Parallel.For(0, 100, (i) =>
 		{
 			var result = Compute(i);
@@ -39,10 +44,10 @@ internal class Program
 
 		WriteLine($"Total: {total}");
 		WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run");
-        ReadLine();
-    }
+		ReadLine();
+	}
 
-    static Random random = new();
+	readonly static Random random = new();
     static decimal Compute(int value)
     {
         var randomMilliseconds = random.Next(10, 50);
