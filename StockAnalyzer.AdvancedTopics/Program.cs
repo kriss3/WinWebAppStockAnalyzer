@@ -17,7 +17,31 @@ internal class Program
 
 		Stopwatch stopwatch = new();
 		stopwatch.Start();
+		// avoid nested locks and deadlocks.
 
+		var t1 = Task.Run(() => {
+			lock (lock1)
+			{
+				Thread.Sleep(1);
+				lock (lock2)
+				{
+					WriteLine("Thread 1: Holding lock 1 & 2");
+				}
+			}
+
+		});
+
+		var t2 = Task.Run(() => {
+			lock (lock2)
+			{
+				Thread.Sleep(1);
+				lock (lock1)
+				{
+					WriteLine("Thread 2: Holding lock 1 & 2");
+				}
+			}
+
+		});
 
 
 
