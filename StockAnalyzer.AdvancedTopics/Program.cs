@@ -11,15 +11,21 @@ internal class Program
 	static readonly object lock1 = new();
 	static readonly object lock2 = new();
 
-	static async void Main()
+	static async Task Main()
 	{
 		//UsingInterlockedType();
 
+		//await IntroductionToDeadlock();
+	}
+
+	private static async Task IntroductionToDeadlock()
+	{
 		Stopwatch stopwatch = new();
 		stopwatch.Start();
-		// avoid nested locks and deadlocks.
+		// avoid nested locks and sharing locks.
 
-		var t1 = Task.Run(() => {
+		var t1 = Task.Run(() =>
+		{
 			lock (lock1)
 			{
 				Thread.Sleep(1);
@@ -31,7 +37,8 @@ internal class Program
 
 		});
 
-		var t2 = Task.Run(() => {
+		var t2 = Task.Run(() =>
+		{
 			lock (lock2)
 			{
 				Thread.Sleep(1);
