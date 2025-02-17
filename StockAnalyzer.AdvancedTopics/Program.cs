@@ -6,7 +6,7 @@ namespace StockAnalyzer.AdvancedTopics;
 
 internal class Program
 {
-	static object lockObject = new();
+	static readonly object lockObject = new();  
 	static void Main()
     {
 		Stopwatch stopwatch = new();
@@ -18,7 +18,7 @@ internal class Program
 		//NOTE: Atomic operations are thread-safe and does not work on decimal , double, float, or long.
 		//Parallel.For(0, 100, (i) =>
 		//{
-		//	var result = Compute(i);
+		//	var result = Compute(i); // computes first and then performs update behind closed doors in a single operation, by a single thread.
 		//	lock (lockObject) //Only lock for a very short time!
 		//          {
 		//		total += result;
@@ -27,8 +27,10 @@ internal class Program
 		//NOTE: Interlock is preferred and it is faster that static lock object on a shared variables.
 		//NOTE: Avoid nested locks and shared locks.
 
+		//NOTE: Calling an expensive operation inside a lock isn't recommended as it is forcing other threads to wait.
+
 		int total = 0;	
-		Parallel.For(0, 100, () => 0, (i) =>
+		Parallel.For(0, 100, (i) =>
 		{
 			var result = Compute(i);
 			Interlocked.Add(ref total, (int)result);
