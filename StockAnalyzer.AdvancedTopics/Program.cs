@@ -7,9 +7,22 @@ namespace StockAnalyzer.AdvancedTopics;
 internal class Program
 {
 	static readonly object lockObject = new();  
+
+	static readonly object lock1 = new();
+	static readonly object lock2 = new();
+
 	static void Main()
 	{
 		//UsingInterlockedType();
+
+		Stopwatch stopwatch = new();
+		stopwatch.Start();
+
+
+
+
+		WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run");
+		ReadLine();
 	}
 
 	private static void UsingInterlockedType()
