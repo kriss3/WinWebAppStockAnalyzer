@@ -34,21 +34,21 @@ internal class Program
 		//NOTE: writing PLINQ. The query is analyzed and optimized before execution. .AsParallel need to be placed before .Select.
 		// There is a way to preserve the order of the results by using .AsOrdered() extension method.
 
-		var results = Enumerable.Range(0, 100)
+		var result = Enumerable.Range(0, 100)
 			.AsParallel()
 			.AsOrdered()
-			.WithCancellation(new(canceled: true))
-			.WithDegreeOfParallelism(2) //this is the same as setting MaxDegreeOfParallelism in ParallelOptions.
 			.Select(Compute)
-			.Take(10); //this does not mean the operation runs sequentially, just order is preserved..
+			.Take(10);
 
-		// There is a variation to ForEach, query exposes .ForAll() method.
-		results.ForAll(result => WriteLine(result));
+		// There is a variation to ForEach, query exposes .ForAll() method that will NOT run sequentially.	
+		//result.ForAll(WriteLine);
 
-		//foreach (var number in numbers)
-		//{
-		//	WriteLine(number);
-		//}
+
+		// ForEach will preserve the order but will run sequentially.
+		foreach (var number in result)
+		{
+			WriteLine(number);
+		}
 
 
 		WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run.");
