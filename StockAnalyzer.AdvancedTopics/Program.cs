@@ -26,6 +26,11 @@ internal class Program
 
 		//WorkingWithThreadLocalOfT();
 
+		//WorkingWithAsyncLocal();
+	}
+
+	private static void WorkingWithAsyncLocal()
+	{
 		var optionParallel = new ParallelOptions
 		{
 			MaxDegreeOfParallelism = 2
