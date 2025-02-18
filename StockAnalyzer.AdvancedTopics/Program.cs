@@ -36,6 +36,7 @@ internal class Program
 
 		var numbers = Enumerable.Range(0, 100)
 			.AsParallel()
+			.AsOrdered()
 			.Select(Compute)
 			.Sum();
 
