@@ -32,13 +32,18 @@ internal class Program
 		stopwatch.Start();
 
 		//NOTE: writing PLINQ. The query is analyzed and optimized before execution. .AsParallel need to be placed before .Select.
-		// There is a way to preserve the order of the results by using .AsOrdered() method.
+		// There is a way to preserve the order of the results by using .AsOrdered() extension method.
 
 		var numbers = Enumerable.Range(0, 100)
 			.AsParallel()
 			.AsOrdered()
 			.Select(Compute)
-			.Sum();
+			.Take(10); //this does not mean the operation runs sequentially, just order is preserved..
+
+		foreach (var number in numbers)
+		{
+			WriteLine(number);
+		}
 
 
 		WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run.");
