@@ -35,6 +35,7 @@ internal class Program
 		// There is a way to preserve the order of the results by using .AsOrdered() method.
 
 		var numbers = Enumerable.Range(0, 100)
+			.AsParallel()
 			.Select(Compute)
 			.Sum();
 
