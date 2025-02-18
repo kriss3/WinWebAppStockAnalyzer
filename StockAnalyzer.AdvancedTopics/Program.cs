@@ -37,6 +37,8 @@ internal class Program
 		var results = Enumerable.Range(0, 100)
 			.AsParallel()
 			.AsOrdered()
+			.WithCancellation(new(canceled: true))
+			.WithDegreeOfParallelism(2) //this is the same as setting MaxDegreeOfParallelism in ParallelOptions.
 			.Select(Compute)
 			.Take(10); //this does not mean the operation runs sequentially, just order is preserved..
 
