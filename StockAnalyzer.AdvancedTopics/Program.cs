@@ -27,6 +27,20 @@ internal class Program
 		//WorkingWithThreadLocalOfT();
 
 		//WorkingWithAsyncLocal();
+
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
+
+		//NOTE: writing PLINQ. The query is analyzed and optimized before execution. .AsParallel need to be placed before .Select.
+		// There is a way to preserve the order of the results by using .AsOrdered() method.
+
+		var numbers = Enumerable.Range(0, 100)
+			.Select(Compute)
+			.Sum();
+
+
+		WriteLine($"It took: {stopwatch.ElapsedMilliseconds}ms to run.");
+		ReadLine();
 	}
 
 	private static void WorkingWithAsyncLocal()
